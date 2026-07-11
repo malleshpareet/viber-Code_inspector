@@ -498,6 +498,8 @@ const sidebarMenuButtonVariants = cva(
 
 function SidebarMenuButton({
   render,
+  asChild,
+  children,
   isActive = false,
   variant = "default",
   size = "default",
@@ -506,19 +508,26 @@ function SidebarMenuButton({
   ...props
 }: useRender.ComponentProps<"button"> &
   React.ComponentProps<"button"> & {
+    asChild?: boolean
     isActive?: boolean
     tooltip?: string | React.ComponentProps<typeof TooltipContent>
   } & VariantProps<typeof sidebarMenuButtonVariants>) {
+  // Map asChild to Base UI's render prop
+  const resolvedRender =
+    asChild && React.isValidElement(children)
+      ? (children as React.ReactElement)
+      : render
   const { isMobile, state } = useSidebar()
   const comp = useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(
       {
         className: cn(sidebarMenuButtonVariants({ variant, size }), className),
+        children: asChild ? undefined : children,
       },
       props
     ),
-    render: !tooltip ? render : <TooltipTrigger render={render} />,
+    render: !tooltip ? resolvedRender : <TooltipTrigger render={resolvedRender} />,
     state: {
       slot: "sidebar-menu-button",
       sidebar: "menu-button",
