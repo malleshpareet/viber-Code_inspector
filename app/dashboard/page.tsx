@@ -151,43 +151,41 @@ const MainPage = () => {
                 <Spinner />
               </div>
             ) : (
-              <div className="h-80 w-full">
-                <ResponsiveContainer width={"100%"} height={"100%"}>
-                  <BarChart data={monthlyActivity || []}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "var(--background)",
-                        borderColor: "var(--border)",
-                      }}
-                      itemStyle={{ color: "var(--foreground)" }}
-                    />
-                    <Legend />
-                    <Bar
-                      dataKey="commits"
-                      name="Commits"
-                      fill="#3b82f6"
-                      radius={[4, 4, 0, 0]}
-                    />
+              <ResponsiveContainer width="100%" height={320}>
+                <BarChart data={monthlyActivity || []}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "var(--background)",
+                      borderColor: "var(--border)",
+                    }}
+                    itemStyle={{ color: "var(--foreground)" }}
+                  />
+                  <Legend />
+                  <Bar
+                    dataKey="commits"
+                    name="Commits"
+                    fill="#3b82f6"
+                    radius={[4, 4, 0, 0]}
+                  />
 
-                    <Bar
-                      dataKey="prs"
-                      name="Pull Requests"
-                      fill="#8b5cf6"
-                      radius={[4, 4, 0, 0]}
-                    />
+                  <Bar
+                    dataKey="prs"
+                    name="Pull Requests"
+                    fill="#8b5cf6"
+                    radius={[4, 4, 0, 0]}
+                  />
 
-                    <Bar
-                      dataKey="reviews"
-                      name="AI Reviews"
-                      fill="#10b981"
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
+                  <Bar
+                    dataKey="reviews"
+                    name="AI Reviews"
+                    fill="#10b981"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
             )}
           </CardContent>
 
