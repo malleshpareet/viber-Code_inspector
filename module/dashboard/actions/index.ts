@@ -9,6 +9,50 @@ import prisma from "@/lib/db";
 import { headers } from "next/headers";
 import { Octokit } from "octokit";
 
+export async function getContributionStats() {
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        });
+
+        if (!session?.user) {
+            throw new Error("Unauthorized");
+        }
+
+        const token = await getGithubToken();
+
+
+        // Get the actual GitHub username from the GitHub API
+        const octokit = new Octokit({ auth: token });
+
+        const { data: user } = await octokit.rest.users.getAuthenticated();
+        const username = user.login;
+
+        const calendar = await fetchUserContribution(token, username);
+
+        if (!calendar) {
+            return null;
+        }
+        // Transform to Activity Calendar format: { date: string, count: number }
+        const contributions = calendar.weeks
+            .flatMap((week: any) => week.contributionDays)
+            .map((day: any) => ({
+                date: day.date,
+                count: day.contributionCount,
+                level: Math.min(4, Math.floor(day.contributionCount / 3))
+            }));
+
+        return {
+            contributions,
+            totalContributions: calendar.totalContributions,
+        };
+
+    } catch (error) {
+        console.error("Error fetching contribution stats:", error);
+        return null;
+    }
+}
+
 
 export async function getDashboardStats() {
     try {
@@ -32,7 +76,7 @@ export async function getDashboardStats() {
         const totalCommits = calender?.totalContributions || 0;
 
         const { data: prs } = await octokit.rest.search.issuesAndPullRequests({
-            q: `author : ${user.login} type : pr`,
+            q: `author:${user.login} type:pr`,
         })
 
         const totalPRs = prs.total_count
